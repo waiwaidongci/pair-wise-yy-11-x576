@@ -1,0 +1,122 @@
+import { MIN_RECOVERY_PRESSURE, TARGET_PRESSURE } from "./constants";
+import type { StationState } from "./types";
+
+/** 首次打开的演示数据:覆盖队列、隔离、签收三种典型状态 */
+export function seedState(): StationState {
+  const ago = (minutes: number) => new Date(Date.now() - minutes * 60_000).toISOString();
+  return {
+    recoveries: [
+      {
+        id: "rec-seed-5",
+        tankId: "TANK-265",
+        pressure: 42,
+        medium: "高氧EAN36",
+        seal: "合格",
+        operator: "李岚",
+        createdAt: ago(18),
+        status: "active",
+        isolationReasons: [],
+        revisions: [],
+      },
+      {
+        id: "rec-seed-4",
+        tankId: "TANK-231",
+        pressure: 96,
+        medium: "Trimix",
+        seal: "异常",
+        operator: "王潜",
+        createdAt: ago(52),
+        status: "isolated",
+        isolationReasons: ["阀门密封异常"],
+        revisions: [],
+      },
+      {
+        id: "rec-seed-3",
+        tankId: "TANK-219",
+        pressure: 12,
+        medium: "高氧EAN32",
+        seal: "合格",
+        operator: "李岚",
+        createdAt: ago(75),
+        status: "isolated",
+        isolationReasons: [`余压低于充填下限 ${MIN_RECOVERY_PRESSURE}bar`],
+        revisions: [],
+      },
+      {
+        id: "rec-seed-2",
+        tankId: "TANK-204",
+        pressure: 55,
+        medium: "空气",
+        seal: "合格",
+        operator: "王潜",
+        createdAt: ago(96),
+        status: "active",
+        isolationReasons: [],
+        revisions: [],
+      },
+      {
+        id: "rec-seed-1",
+        tankId: "TANK-187",
+        pressure: 120,
+        medium: "空气",
+        seal: "合格",
+        operator: "赵澄",
+        createdAt: ago(240),
+        status: "active",
+        isolationReasons: [],
+        revisions: [],
+      },
+    ],
+    fills: [
+      {
+        id: "fill-seed-5",
+        recoveryId: "rec-seed-5",
+        tankId: "TANK-265",
+        medium: "高氧EAN36",
+        targetPressure: TARGET_PRESSURE,
+        status: "pending",
+        affected: false,
+        createdAt: ago(18),
+      },
+      {
+        id: "fill-seed-2",
+        recoveryId: "rec-seed-2",
+        tankId: "TANK-204",
+        medium: "空气",
+        targetPressure: TARGET_PRESSURE,
+        status: "pending",
+        affected: false,
+        createdAt: ago(96),
+      },
+      {
+        id: "fill-seed-1",
+        recoveryId: "rec-seed-1",
+        tankId: "TANK-187",
+        medium: "空气",
+        targetPressure: TARGET_PRESSURE,
+        status: "signed",
+        affected: false,
+        createdAt: ago(240),
+        signedAt: ago(120),
+        signedBy: "陈汐",
+      },
+    ],
+    log: [
+      {
+        id: "log-seed-3",
+        at: ago(18),
+        text: "TANK-265 登记回收:余压 42bar · 高氧EAN36 · 密封合格,进入待充填队列",
+      },
+      {
+        id: "log-seed-2",
+        at: ago(52),
+        text: "TANK-231 登记回收:阀门密封异常,进入隔离清单(不占充填位)",
+      },
+      {
+        id: "log-seed-1",
+        at: ago(120),
+        text: "TANK-187 充填完成,陈汐 签收",
+      },
+    ],
+  };
+}
